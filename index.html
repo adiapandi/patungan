@@ -583,25 +583,35 @@ async function scanReceipt(){
   try{
     const base64 = await fileToBase64(selectedFile);
     const mediaType = selectedFile.type || 'image/jpeg';
-    // Ganti URL di bawah ini dengan URL Cloudflare Worker kamu sendiri
-    const PROXY_URL = "https://patungan-proxy2.hasanahdigital.workers.dev/";
-    const response = await fetch(PROXY_URL, {
+
+    // Ganti dengan API key Gemini kamu sendiri (gratis, dari https://aistudio.google.com/apikey)
+    const GEMINI_API_KEY = "AQ.Ab8RN6JbFmBlUh3hPVRLvwDpfzm_VMXGBWjTH130kHBBA5gP3w";
+    const GEMINI_MODEL = "gemini-flash-latest";
+
+    const promptText = "Ini foto struk belanja/makan. Baca semua nama item beserta harganya (harga total per baris item, bukan per unit kalau ada qty>1). Balas HANYA dengan JSON array valid, tanpa teks lain, tanpa markdown/backtick, format persis: [{\"name\":\"nama item\",\"price\":12000}]. Harga berupa angka rupiah murni tanpa titik/koma/simbol. JANGAN masukkan baris pajak, service charge, diskon, atau total ke dalam array ini, cukup item barang/makanannya saja.";
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY,
+      },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: "Ini foto struk belanja/makan. Baca semua nama item beserta harganya (harga satuan total per baris item, bukan per unit kalau ada qty>1). Balas HANYA dengan JSON array valid, tanpa teks lain, tanpa markdown/backtick, format persis: [{\"name\":\"nama item\",\"price\":12000}]. Harga berupa angka rupiah murni tanpa titik/koma/simbol. JANGAN masukkan baris pajak, service charge, diskon, atau total ke dalam array ini, cukup item barang/makanannya saja." }
+        contents: [{
+          parts: [
+            { inline_data: { mime_type: mediaType, data: base64 } },
+            { text: promptText }
           ]
         }]
       })
     });
     const data = await response.json();
-    const text = (data.content || []).map(b => b.text || '').join('');
+    if(data.error){
+      setScanStatus(`Gagal: ${data.error.message || 'cek API key kamu'}`);
+      scanBtn.disabled = false;
+      return;
+    }
+    const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
     const clean = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     if(!Array.isArray(parsed) || parsed.length === 0){
