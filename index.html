@@ -584,7 +584,7 @@ async function scanReceipt(){
     const base64 = await fileToBase64(selectedFile);
     const mediaType = selectedFile.type || 'image/jpeg';
     // Ganti URL di bawah ini dengan URL Cloudflare Worker kamu sendiri
-    const PROXY_URL = "https://patungan-proxy.hasanahdigital.workers.dev/";
+    const PROXY_URL = "https://patungan-proxy2.hasanahdigital.workers.dev/";
     const response = await fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
