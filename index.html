@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>PATUNGAN! — Struk Digital Kantor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAF6D6;
+    --bg2:#DCEFC2;
+    --paper:#FFFFFF;
+    --ink:#1B1033;
+    --ink-soft:#5B5470;
+    --lime:#C8FF4D;
+    --lime-deep:#9FE300;
+    --accent:#FF6A2B;
+    --accent-soft:#FFE3D1;
+    --blue:#4C5FFF;
+    --blue-soft:#E7E9FF;
+    --line:#DAD6E8;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(255,106,43,0.16), transparent 40%),
+      radial-gradient(circle at 90% 12%, rgba(76,95,255,0.14), transparent 45%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--ink);
+    padding:32px 16px 80px;
+  }
+  .wrap{max-width:560px; margin:0 auto;}
+
+  /* HEADER */
+  .header{text-align:center; margin-bottom:26px;}
+  .logo{
+    display:inline-block;
+    font-family:'Archivo Black', sans-serif;
+    font-size:clamp(34px, 8vw, 46px);
+    letter-spacing:-1px;
+    color:var(--ink);
+    transform:rotate(-2deg);
+    position:relative;
+  }
+  .logo .exc{color:var(--accent);}
+  .tagline{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:6px;
+    letter-spacing:0.5px;
+  }
+
+  /* RECEIPT CARD */
+  .receipt{
+    position:relative;
+    background:var(--paper);
+    border-radius:6px;
+    padding:34px 26px 30px;
+    box-shadow:0 24px 50px -20px rgba(27,16,51,0.35);
+    margin-top:20px;
+  }
+  .receipt::before, .receipt::after{
+    content:"";
+    position:absolute; left:0; right:0; height:13px;
+    background:
+      linear-gradient(-45deg, var(--paper) 7px, transparent 0) 0 0,
+      linear-gradient(45deg, var(--paper) 7px, transparent 0) 0 0;
+    background-size:14px 14px;
+    background-repeat:repeat-x;
+  }
+  .receipt::before{ top:-12px; }
+  .receipt::after{ bottom:-12px; transform:rotate(180deg); }
+
+  .section{padding:18px 0;}
+  .section:first-child{padding-top:0;}
+  .divider{
+    border:none;
+    border-top:2px dashed var(--line);
+    margin:0;
+  }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--accent);
+    font-weight:700;
+    margin:0 0 10px;
+  }
+  h2.label{
+    font-family:'Archivo Black', sans-serif;
+    font-size:18px;
+    margin:0 0 12px;
+    letter-spacing:-0.3px;
+  }
+
+  input[type=text], input[type=number]{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:15px;
+    padding:11px 14px;
+    border-radius:12px;
+    border:2px solid var(--line);
+    background:#FBFAFF;
+    color:var(--ink);
+    outline:none;
+    width:100%;
+  }
+  input:focus{border-color:var(--blue);}
+  input::placeholder{color:#B4AFC6;}
+
+  .event-input{font-family:'Archivo Black', sans-serif; font-size:20px; text-align:center;}
+
+  /* PESERTA */
+  .add-row{display:flex; gap:8px; margin-bottom:12px;}
+  .add-row input{flex:1;}
+  .btn{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    border:2px solid var(--ink);
+    border-radius:12px;
+    padding:11px 16px;
+    cursor:pointer;
+    background:var(--ink);
+    color:var(--lime);
+    white-space:nowrap;
+    transition:transform 0.12s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-ghost{background:transparent; color:var(--ink);}
+  .btn-block{width:100%;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    display:flex; align-items:center; gap:6px;
+    background:var(--accent-soft);
+    border:2px solid var(--accent);
+    border-radius:999px;
+    padding:6px 6px 6px 14px;
+    font-weight:700;
+    font-size:14px;
+  }
+  .chip button{
+    border:none; background:var(--accent); color:#fff;
+    width:20px; height:20px; border-radius:50%;
+    cursor:pointer; font-size:12px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .empty-hint{
+    font-family:'Space Mono', monospace;
+    font-size:13px; color:var(--ink-soft);
+    background:#F5F3FA; border-radius:10px; padding:12px 14px;
+  }
+
+  /* UPLOAD / TABS */
+  .input-tabs{display:flex; gap:8px; margin-bottom:14px;}
+  .tab-btn{
+    flex:1; padding:10px 6px; border-radius:12px; border:2px solid var(--ink);
+    background:#fff; color:var(--ink); font-weight:800; font-size:13px; cursor:pointer;
+    font-family:'Plus Jakarta Sans', sans-serif;
+  }
+  .tab-btn.on{background:var(--ink); color:var(--lime);}
+  .input-pane{margin-bottom:6px;}
+
+  .upload-box{
+    display:flex; align-items:center; justify-content:center;
+    border:2px dashed var(--blue); border-radius:14px;
+    padding:24px 16px; margin-bottom:10px; cursor:pointer;
+    background:var(--blue-soft); color:var(--blue); font-weight:700; font-size:14px;
+    text-align:center;
+  }
+  #receiptPreview{
+    width:100%; max-height:220px; object-fit:contain;
+    border-radius:12px; margin-bottom:10px; border:2px solid var(--line);
+  }
+
+  .item-assign-toggle{
+    font-family:'Space Mono', monospace;
+    font-size:11px; color:var(--blue); font-weight:700; cursor:pointer; margin-top:3px; display:inline-block;
+  }
+  .item-assign-box{margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; width:100%;}
+
+  /* ITEMS */
+  .item-form{
+    background:var(--blue-soft);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .item-form-row{display:flex; gap:8px; margin-bottom:10px;}
+  .item-form-row input:first-child{flex:2;}
+  .item-form-row input:last-child{flex:1;}
+  .assign-label{font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; display:block;}
+  .assign-list{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .assign-pill{
+    font-size:13px; font-weight:600;
+    border:2px solid var(--blue); border-radius:999px;
+    padding:5px 12px; cursor:pointer; user-select:none;
+    background:#fff; color:var(--blue);
+  }
+  .assign-pill.on{background:var(--blue); color:#fff;}
+
+  .item-list{list-style:none; margin:0; padding:0;}
+  .item-row{
+    padding:10px 0; border-bottom:1px dashed var(--line);
+  }
+  .item-row:last-child{border-bottom:none;}
+  .item-row-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .item-name{font-weight:700; font-size:15px;}
+  .item-who{font-family:'Space Mono', monospace; font-size:11.5px; color:var(--ink-soft); margin-top:3px;}
+  .item-price{font-family:'Space Mono', monospace; font-weight:700; white-space:nowrap;}
+  .item-del{
+    border:none; background:none; color:var(--accent); cursor:pointer;
+    font-size:16px; padding:0 0 0 6px;
+  }
+
+  /* EXTRA COSTS */
+  .extra-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .extra-field label{
+    font-size:12px; font-weight:700; color:var(--ink-soft);
+    display:block; margin-bottom:5px;
+  }
+
+  /* CALC BUTTON */
+  .calc-btn{
+    background:var(--lime);
+    color:var(--ink);
+    border:3px solid var(--ink);
+    font-family:'Archivo Black', sans-serif;
+    font-size:17px;
+    letter-spacing:0.3px;
+    padding:16px;
+    border-radius:14px;
+    box-shadow:4px 4px 0 var(--ink);
+  }
+  .calc-btn:active{box-shadow:1px 1px 0 var(--ink); transform:translate(3px,3px);}
+
+  /* RESULTS */
+  .result-header{text-align:center; margin-bottom:16px;}
+  .stamp{
+    display:inline-block;
+    font-family:'Space Mono', monospace;
+    font-weight:700; font-size:12px; letter-spacing:1px;
+    color:var(--accent); border:2px solid var(--accent);
+    border-radius:8px; padding:4px 10px;
+    transform:rotate(-3deg);
+  }
+  .person-card{
+    background:#FBFAFF;
+    border:2px solid var(--ink);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .person-top{display:flex; justify-content:space-between; align-items:center; cursor:pointer;}
+  .person-name{font-weight:800; font-size:15.5px;}
+  .person-total{font-family:'Space Mono', monospace; font-weight:700; font-size:16px; color:var(--accent);}
+  .person-detail{
+    margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+    font-family:'Space Mono', monospace; font-size:12.5px; color:var(--ink-soft);
+    display:none;
+  }
+  .person-detail.open{display:block;}
+  .person-detail div{display:flex; justify-content:space-between; padding:2px 0;}
+  .grand-total{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Archivo Black', sans-serif; font-size:18px;
+    padding-top:16px; margin-top:6px; border-top:2px dashed var(--line);
+  }
+  .grand-total span:last-child{color:var(--accent);}
+
+  .copy-btn{
+    margin-top:16px;
+    background:var(--ink); color:var(--lime);
+    border:none; border-radius:12px; padding:13px;
+    font-weight:800; font-size:14px; width:100%; cursor:pointer;
+  }
+  .copy-btn.copied{background:var(--lime-deep); color:var(--ink);}
+
+  .footer-note{
+    text-align:center; font-family:'Space Mono', monospace;
+    font-size:11.5px; color:var(--ink-soft); margin-top:18px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo">PATUNGAN<span class="exc">!</span></div>
+    <div class="tagline">struk digital, no ribet-ribet club ⚡</div>
+  </div>
+
+  <div class="receipt">
+
+    <div class="section">
+      <p class="eyebrow">Acara Apa Nih</p>
+      <input type="text" id="eventName" class="event-input" placeholder="Ulang Tahun Haaland 🎂" />
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
+      <p class="eyebrow">Peserta</p>
+      <h2 class="label">Siapa Aja Nih? 🙌</h2>
+      <div class="add-row">
+        <input type="text" id="nameInput" placeholder="Ketik nama, terus Enter" />
+        <button class="btn" onclick="addPerson()">Gas +</button>
+      </div>
+      <div id="chipsBox" class="chips"></div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
+      <p class="eyebrow">Belanjaan</p>
+      <h2 class="label">List Item 🧾</h2>
+
+      <div class="input-tabs">
+        <button class="tab-btn on" id="tabUploadBtn" onclick="switchTab('upload')">📸 Upload Struk</button>
+        <button class="tab-btn" id="tabManualBtn" onclick="switchTab('manual')">✍️ Manual</button>
+      </div>
+
+      <div id="uploadPane" class="input-pane">
+        <label class="upload-box" for="receiptFile">
+          <span id="uploadLabelText">Tap buat pilih/foto struknya 📷</span>
+        </label>
+        <input type="file" id="receiptFile" accept="image/*" onchange="onFileSelected()" style="display:none;" />
+        <img id="receiptPreview" style="display:none;" />
+        <button class="btn btn-block" id="scanBtn" onclick="scanReceipt()" disabled>Baca Struk Otomatis ✨</button>
+        <div id="scanStatus" class="empty-hint" style="display:none; margin-top:10px;"></div>
+      </div>
+
+      <div id="manualPane" class="input-pane" style="display:none;">
+        <div class="item-form">
+          <div class="item-form-row">
+            <input type="text" id="itemName" placeholder="Nama item (mis. EsKoppi)" />
+            <input type="number" id="itemPrice" placeholder="Harga" />
+          </div>
+          <span class="assign-label">Buat siapa aja? (default: semua)</span>
+          <div id="assignList" class="assign-list"></div>
+          <button class="btn btn-block" onclick="addItem()">Tambah ke Struk</button>
+        </div>
+      </div>
+
+      <ul id="itemList" class="item-list"></ul>
+      <div id="itemEmptyHint" class="empty-hint">Belum ada item, gas tambahin jajanannya dulu ✍️</div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
+      <p class="eyebrow">Biaya Tambahan</p>
+      <h2 class="label">Pajak, Service, Diskon</h2>
+      <div class="extra-grid">
+        <div class="extra-field">
+          <label>Pajak (Rp)</label>
+          <input type="number" id="taxFlat" placeholder="0" value="0" />
+        </div>
+        <div class="extra-field">
+          <label>Service (Rp)</label>
+          <input type="number" id="serviceFlat" placeholder="0" value="0" />
+        </div>
+        <div class="extra-field" style="grid-column:1/-1;">
+          <label>Diskon (Rp)</label>
+          <input type="number" id="discountFlat" placeholder="0" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
+      <button class="btn calc-btn btn-block" onclick="calculate()">GASKEUN, HITUNG! 🧮</button>
+    </div>
+
+    <div id="resultsSection" style="display:none;">
+      <hr class="divider" />
+      <div class="section">
+        <div class="result-header">
+          <span class="stamp">FIX SEGINI YA 📌</span>
+        </div>
+        <div id="personCards"></div>
+        <div class="grand-total">
+          <span>TOTAL SEMUA</span>
+          <span id="grandTotal">Rp0</span>
+        </div>
+        <button class="copy-btn" id="copyBtn" onclick="copyResult()">Salin buat Share ke Grup WA 📋</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">tap nama di hasil buat liat rinciannya ya gengs ✨</div>
+</div>
+
+<script>
+let people = [];
+let items = [];
+let pid = 1, iid = 1;
+let lastResult = null;
+
+function render(){
+  renderChips();
+  renderAssignList();
+  renderItems();
+}
+
+function renderChips(){
+  const box = document.getElementById('chipsBox');
+  if(people.length === 0){
+    box.innerHTML = '<div class="empty-hint">Belum ada peserta, invite dulu gengs-nya!</div>';
+    return;
+  }
+  box.innerHTML = people.map(p => `
+    <div class="chip">${escapeHtml(p.name)}
+      <button onclick="removePerson(${p.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function renderAssignList(){
+  const box = document.getElementById('assignList');
+  if(people.length === 0){
+    box.innerHTML = '<span class="empty-hint">Tambah peserta dulu ya, baru bisa assign item</span>';
+    return;
+  }
+  box.innerHTML = people.map(p => `
+    <span class="assign-pill ${p.tempOn !== false ? 'on' : ''}" data-id="${p.id}" onclick="toggleAssign(${p.id})">${escapeHtml(p.name)}</span>
+  `).join('');
+}
+
+function toggleAssign(id){
+  const p = people.find(x => x.id === id);
+  p.tempOn = p.tempOn === false ? true : false;
+  renderAssignList();
+}
+
+function renderItems(){
+  const list = document.getElementById('itemList');
+  const hint = document.getElementById('itemEmptyHint');
+  if(items.length === 0){
+    list.innerHTML = '';
+    hint.style.display = 'block';
+    return;
+  }
+  hint.style.display = 'none';
+  list.innerHTML = items.map(it => {
+    const names = it.assignedIds.map(pid => {
+      const p = people.find(x => x.id === pid);
+      return p ? p.name : '';
+    }).filter(Boolean).join(', ');
+    const assignBox = it.showAssign ? `
+      <div class="item-assign-box">
+        ${people.map(p => `
+          <span class="assign-pill ${it.assignedIds.includes(p.id) ? 'on' : ''}" onclick="toggleItemAssign(${it.id}, ${p.id})">${escapeHtml(p.name)}</span>
+        `).join('')}
+      </div>` : '';
+    return `
+    <li class="item-row">
+      <div class="item-row-top">
+        <div>
+          <div class="item-name">${escapeHtml(it.name)}</div>
+          <div class="item-who">buat: ${names || '—'}</div>
+          <span class="item-assign-toggle" onclick="toggleShowAssign(${it.id})">${it.showAssign ? 'tutup ▲' : 'atur ✏️'}</span>
+        </div>
+        <div style="display:flex; align-items:center;">
+          <div class="item-price">${formatRp(it.price)}</div>
+          <button class="item-del" onclick="removeItem(${it.id})">✕</button>
+        </div>
+      </div>
+      ${assignBox}
+    </li>`;
+  }).join('');
+}
+
+function toggleShowAssign(id){
+  const it = items.find(x => x.id === id);
+  it.showAssign = !it.showAssign;
+  renderItems();
+}
+
+function toggleItemAssign(itemId, personId){
+  const it = items.find(x => x.id === itemId);
+  if(it.assignedIds.includes(personId)){
+    if(it.assignedIds.length === 1) return;
+    it.assignedIds = it.assignedIds.filter(x => x !== personId);
+  } else {
+    it.assignedIds.push(personId);
+  }
+  renderItems();
+}
+
+function addPerson(){
+  const input = document.getElementById('nameInput');
+  const name = input.value.trim();
+  if(!name) return;
+  people.push({id: pid++, name, tempOn: true});
+  input.value = '';
+  render();
+}
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ addPerson(); }
+});
+
+function removePerson(id){
+  people = people.filter(p => p.id !== id);
+  items.forEach(it => { it.assignedIds = it.assignedIds.filter(x => x !== id); });
+  render();
+}
+
+function addItem(){
+  const nameEl = document.getElementById('itemName');
+  const priceEl = document.getElementById('itemPrice');
+  const name = nameEl.value.trim();
+  const price = parseFloat(priceEl.value);
+  if(!name || !price || price <= 0){ return; }
+  if(people.length === 0){ return; }
+  const assignedIds = people.filter(p => p.tempOn !== false).map(p => p.id);
+  if(assignedIds.length === 0){ return; }
+  items.push({id: iid++, name, price, assignedIds});
+  nameEl.value = '';
+  priceEl.value = '';
+  people.forEach(p => p.tempOn = true);
+  render();
+}
+
+function removeItem(id){
+  items = items.filter(it => it.id !== id);
+  renderItems();
+}
+
+function switchTab(tab){
+  document.getElementById('tabUploadBtn').classList.toggle('on', tab === 'upload');
+  document.getElementById('tabManualBtn').classList.toggle('on', tab === 'manual');
+  document.getElementById('uploadPane').style.display = tab === 'upload' ? 'block' : 'none';
+  document.getElementById('manualPane').style.display = tab === 'manual' ? 'block' : 'none';
+}
+
+let selectedFile = null;
+
+function onFileSelected(){
+  const fileInput = document.getElementById('receiptFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  selectedFile = file;
+  const preview = document.getElementById('receiptPreview');
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = 'block';
+  document.getElementById('uploadLabelText').textContent = file.name;
+  document.getElementById('scanBtn').disabled = false;
+  setScanStatus('');
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setScanStatus(msg){
+  const el = document.getElementById('scanStatus');
+  if(!msg){ el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+async function scanReceipt(){
+  if(!selectedFile) return;
+  const scanBtn = document.getElementById('scanBtn');
+  scanBtn.disabled = true;
+  setScanStatus('Lagi baca struknya... 🔍✨');
+  try{
+    const base64 = await fileToBase64(selectedFile);
+    const mediaType = selectedFile.type || 'image/jpeg';
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+            { type: "text", text: "Ini foto struk belanja/makan. Baca semua nama item beserta harganya (harga satuan total per baris item, bukan per unit kalau ada qty>1). Balas HANYA dengan JSON array valid, tanpa teks lain, tanpa markdown/backtick, format persis: [{\"name\":\"nama item\",\"price\":12000}]. Harga berupa angka rupiah murni tanpa titik/koma/simbol. JANGAN masukkan baris pajak, service charge, diskon, atau total ke dalam array ini, cukup item barang/makanannya saja." }
+          ]
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = (data.content || []).map(b => b.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    if(!Array.isArray(parsed) || parsed.length === 0){
+      setScanStatus('Waduh, gak ketemu item apa-apa. Coba foto yang lebih jelas atau isi manual ya 😅');
+      scanBtn.disabled = false;
+      return;
+    }
+    const defaultAssign = people.map(p => p.id);
+    parsed.forEach(it => {
+      const price = parseFloat(it.price);
+      if(it.name && price > 0){
+        items.push({ id: iid++, name: String(it.name), price, assignedIds: defaultAssign.slice(), showAssign: false });
+      }
+    });
+    renderItems();
+    setScanStatus(`Berhasil baca ${parsed.length} item! Cek harga & yang ikut nanggung di bawah, edit kalau ada yang salah ya ✅`);
+    if(people.length === 0){
+      setScanStatus(`Berhasil baca ${parsed.length} item, tapi belum ada peserta — tambahin peserta dulu di atas ya, nanti tap "atur ✏️" di tiap item buat assign 👆`);
+    }
+  } catch(err){
+    setScanStatus('Gagal baca struknya nih, coba foto ulang yang lebih terang/jelas, atau isi manual aja 😅');
+  } finally {
+    scanBtn.disabled = false;
+  }
+}
+
+function formatRp(n){
+  return 'Rp' + Math.round(n).toLocaleString('id-ID');
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function calculate(){
+  if(people.length === 0 || items.length === 0) return;
+
+  const subtotal = items.reduce((sum, it) => sum + it.price, 0);
+  const taxFlat = parseFloat(document.getElementById('taxFlat').value) || 0;
+  const serviceFlat = parseFloat(document.getElementById('serviceFlat').value) || 0;
+  const discountFlat = parseFloat(document.getElementById('discountFlat').value) || 0;
+
+  const netExtra = taxFlat + serviceFlat - discountFlat;
+
+  const perPerson = {};
+  people.forEach(p => { perPerson[p.id] = { name: p.name, lines: [], raw: 0 }; });
+
+  items.forEach(it => {
+    const share = it.price / it.assignedIds.length;
+    it.assignedIds.forEach(pidX => {
+      if(perPerson[pidX]){
+        perPerson[pidX].lines.push({ name: it.name, amount: share });
+        perPerson[pidX].raw += share;
+      }
+    });
+  });
+
+  let grandTotal = 0;
+  const results = Object.values(perPerson).map(p => {
+    const extraShare = subtotal > 0 ? (p.raw / subtotal) * netExtra : 0;
+    const total = p.raw + extraShare;
+    grandTotal += total;
+    return { ...p, extraShare, total };
+  });
+
+  lastResult = { results, grandTotal, taxFlat, serviceFlat, discountFlat, eventName: document.getElementById('eventName').value.trim() };
+  renderResults();
+}
+
+function renderResults(){
+  const section = document.getElementById('resultsSection');
+  section.style.display = 'block';
+  const box = document.getElementById('personCards');
+  box.innerHTML = lastResult.results.map((p, idx) => `
+    <div class="person-card">
+      <div class="person-top" onclick="toggleDetail(${idx})">
+        <span class="person-name">${escapeHtml(p.name)}</span>
+        <span class="person-total">${formatRp(p.total)}</span>
+      </div>
+      <div class="person-detail" id="detail-${idx}">
+        ${p.lines.map(l => `<div><span>${escapeHtml(l.name)}</span><span>${formatRp(l.amount)}</span></div>`).join('')}
+        <div><span>Pajak/service/diskon</span><span>${formatRp(p.extraShare)}</span></div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('grandTotal').textContent = formatRp(lastResult.grandTotal);
+  document.getElementById('copyBtn').classList.remove('copied');
+  document.getElementById('copyBtn').textContent = 'Salin buat Share ke Grup WA 📋';
+  section.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function toggleDetail(idx){
+  document.getElementById(`detail-${idx}`).classList.toggle('open');
+}
+
+function copyResult(){
+  if(!lastResult) return;
+  const title = lastResult.eventName ? `🧾 PATUNGAN — ${lastResult.eventName}` : `🧾 PATUNGAN!`;
+  let text = `${title}\n`;
+  lastResult.results.forEach(p => {
+    text += `${p.name}: ${formatRp(p.total)}\n`;
+  });
+  text += `\nTotal: ${formatRp(lastResult.grandTotal)}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Kesalin! Gas paste di grup ✅';
+    btn.classList.add('copied');
+  }).catch(() => {});
+}
+
+render();
+</script>
+</body>
+</html>
