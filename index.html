@@ -393,11 +393,26 @@
           <span id="grandTotal">Rp0</span>
         </div>
         <button class="copy-btn" id="copyBtn" onclick="copyResult()">Salin buat Share ke Grup WA 📋</button>
+        <button class="copy-btn" id="exportBtn" onclick="exportImage()" style="margin-top:10px; background:var(--blue); color:#fff;">Simpan sebagai Gambar 📸</button>
       </div>
     </div>
 
   </div>
 
+ <!-- Kartu khusus buat di-capture jadi gambar, disembunyikan dari layar -->
+  <div id="exportCard" style="position:absolute; left:-9999px; top:0; width:380px; background:#FFFFFF; padding:28px 22px; font-family:'Plus Jakarta Sans', sans-serif; color:#1B1033;">
+    <div style="text-align:center; margin-bottom:6px;">
+      <span style="font-family:'Archivo Black', sans-serif; font-size:30px;">PATUNGAN<span style="color:#FF6A2B;">!</span></span>
+    </div>
+    <div id="exportEventName" style="text-align:center; font-family:'Space Mono', monospace; font-size:13px; color:#5B5470; margin-bottom:16px;"></div>
+    <hr style="border:none; border-top:2px dashed #DAD6E8; margin:0 0 14px;" />
+    <div id="exportPersonList"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Archivo Black', sans-serif; font-size:17px; padding-top:14px; margin-top:6px; border-top:2px dashed #DAD6E8;">
+      <span>TOTAL SEMUA</span>
+      <span id="exportGrandTotal" style="color:#FF6A2B;">Rp0</span>
+    </div>
+  </div>
+  
   <div class="footer-note">tap nama di hasil buat liat rinciannya, bestie ✨</div>
   <div style="text-align:center; font-family:'Space Mono', monospace; font-size:11px; color:#5B5470; margin-top:24px; opacity:0.7;">
   © 2026 adiapandi. All rights reserved.
