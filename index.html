@@ -699,7 +699,45 @@ function renderResults(){
   document.getElementById('grandTotal').textContent = formatRp(lastResult.grandTotal);
   document.getElementById('copyBtn').classList.remove('copied');
   document.getElementById('copyBtn').textContent = 'Salin buat Share ke Grup WA 📋';
+
+ // isi kartu buat export gambar
+  document.getElementById('exportEventName').textContent = lastResult.eventName || 'Struk Patungan';
+  document.getElementById('exportPersonList').innerHTML = lastResult.results.map(p => `
+    <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #DAD6E8; font-size:14px;">
+      <span style="font-weight:700;">${escapeHtml(p.name)}</span>
+      <span style="font-family:'Space Mono', monospace; font-weight:700;">${formatRp(p.total)}</span>
+    </div>
+  `).join('');
+  document.getElementById('exportGrandTotal').textContent = formatRp(lastResult.grandTotal);
+
   section.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+async function exportImage(){
+  const btn = document.getElementById('exportBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Lagi bikin gambarnya...';
+  btn.disabled = true;
+  try{
+    const card = document.getElementById('exportCard');
+    card.style.left = '0px';
+    card.style.position = 'fixed';
+    card.style.top = '-99999px';
+    const canvas = await html2canvas(card, { backgroundColor: '#FFFFFF', scale: 2 });
+    card.style.position = 'absolute';
+    card.style.left = '-9999px';
+    card.style.top = '0';
+    const link = document.createElement('a');
+    const namePart = (lastResult.eventName || 'struk').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    link.download = `patungan-${namePart}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(err){
+    alert('Gagal bikin gambar, coba lagi ya.');
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
 }
 
 function toggleDetail(idx){
