@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>PATUNGAN! — Struk Digital</title>
+<title>PATUNGAN! — Struk Digital Split Bill</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -118,8 +118,14 @@
   .event-input{font-family:'Archivo Black', sans-serif; font-size:20px; text-align:center;}
 
   /* PESERTA */
-  .add-row{display:flex; gap:8px; margin-bottom:12px;}
+  .add-row{display:flex; gap:8px; margin-bottom:12px; align-items:flex-start;}
   .add-row input{flex:1;}
+  .add-row textarea{
+    flex:1; font-family:'Plus Jakarta Sans', sans-serif; font-size:15px;
+    padding:11px 14px; border-radius:12px; border:2px solid var(--line);
+    background:#FBFAFF; color:var(--ink); outline:none; resize:vertical;
+  }
+  .add-row textarea:focus{border-color:var(--blue);}
   .btn{
     font-family:'Plus Jakarta Sans', sans-serif;
     font-weight:800;
@@ -312,8 +318,8 @@
       <p class="eyebrow">Peserta</p>
       <h2 class="label">Siapa Aja Nih? 🙌</h2>
       <div class="add-row">
-        <input type="text" id="nameInput" placeholder="Ketik nama, terus Enter" />
-        <button class="btn" onclick="addPerson()">Gas +</button>
+        <textarea id="nameInput" rows="2" placeholder="Ketik/paste nama, pisahin pakai koma atau baris baru&#10;Contoh: Budi, Sari, Andi"></textarea>
+        <button class="btn" onclick="addPerson()">Add+</button>
       </div>
       <div id="chipsBox" class="chips"></div>
     </div>
@@ -379,6 +385,27 @@
     <hr class="divider" />
 
     <div class="section">
+      <p class="eyebrow">Transfer Ke Sini Ya</p>
+      <h2 class="label">Info Rekening 💸</h2>
+      <div class="extra-grid">
+        <div class="extra-field">
+          <label>Bank / E-Wallet</label>
+          <input type="text" id="bankName" placeholder="mis. BCA / GoPay" />
+        </div>
+        <div class="extra-field">
+          <label>Nomor Rekening</label>
+          <input type="text" id="accountNumber" placeholder="mis. 1234567890" />
+        </div>
+        <div class="extra-field" style="grid-column:1/-1;">
+          <label>Atas Nama</label>
+          <input type="text" id="accountName" placeholder="Nama pemilik rekening" />
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
       <button class="btn calc-btn btn-block" onclick="calculate()">GASKEUN, HITUNG! 🧮</button>
     </div>
 
@@ -387,6 +414,10 @@
       <div class="section">
         <div class="result-header">
           <span class="stamp">FIX SEGINI YA 📌</span>
+        </div>
+        <div id="transferBox" style="display:none; background:var(--blue-soft); border:2px solid var(--blue); border-radius:12px; padding:12px 16px; margin-bottom:16px; text-align:center;">
+          <div style="font-size:11px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Transfer Ke</div>
+          <div id="transferText" style="font-family:'Space Mono', monospace; font-weight:700; font-size:14.5px;"></div>
         </div>
         <div id="personCards"></div>
         <div class="grand-total">
@@ -400,7 +431,7 @@
 
   </div>
 
- <!-- Kartu khusus buat di-capture jadi gambar, disembunyikan dari layar -->
+  <!-- Kartu khusus buat di-capture jadi gambar, disembunyikan dari layar -->
   <div id="exportCard" style="position:absolute; left:-9999px; top:0; width:380px; background:#FFFFFF; padding:28px 22px; font-family:'Plus Jakarta Sans', sans-serif; color:#1B1033;">
     <div style="text-align:center; margin-bottom:6px;">
       <span style="font-family:'Archivo Black', sans-serif; font-size:30px;">PATUNGAN<span style="color:#FF6A2B;">!</span></span>
@@ -412,11 +443,13 @@
       <span>TOTAL SEMUA</span>
       <span id="exportGrandTotal" style="color:#FF6A2B;">Rp0</span>
     </div>
+    <div id="exportTransfer" style="display:none; text-align:center; font-family:'Space Mono', monospace; font-weight:700; font-size:12px; background:#E7E9FF; color:#4C5FFF; border-radius:8px; padding:10px 8px; margin-top:14px;"></div>
+    <div style="text-align:center; font-family:'Space Mono', monospace; font-size:10.5px; color:#5B5470; margin-top:20px; opacity:0.7;">
+      © 2026 adiapandi. All rights reserved.
+    </div>
   </div>
 
-  <div class="footer-note">tap nama di hasil buat liat rinciannya, bestie ✨</div>
-  <div style="text-align:center; font-family:'Space Mono', monospace; font-size:11px; color:#5B5470; margin-top:24px; opacity:0.7;">
-  © 2026 adiapandi. All rights reserved.
+  <div class="footer-note">tap nama di hasil buat liat rinciannya, gengs ✨</div>
 </div>
 
 <script>
@@ -518,14 +551,20 @@ function toggleItemAssign(itemId, personId){
 
 function addPerson(){
   const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  people.push({id: pid++, name, tempOn: true});
+  const raw = input.value;
+  if(!raw.trim()) return;
+  const names = raw.split(/[\n,;]+/).map(n => n.trim()).filter(Boolean);
+  names.forEach(name => {
+    people.push({id: pid++, name, tempOn: true});
+  });
   input.value = '';
   render();
 }
 document.getElementById('nameInput').addEventListener('keydown', e => {
-  if(e.key === 'Enter'){ addPerson(); }
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    addPerson();
+  }
 });
 
 function removePerson(id){
@@ -691,7 +730,13 @@ function calculate(){
     return { ...p, extraShare, total };
   });
 
-  lastResult = { results, grandTotal, taxFlat, serviceFlat, discountFlat, eventName: document.getElementById('eventName').value.trim() };
+  lastResult = {
+    results, grandTotal, taxFlat, serviceFlat, discountFlat,
+    eventName: document.getElementById('eventName').value.trim(),
+    bankName: document.getElementById('bankName').value.trim(),
+    accountNumber: document.getElementById('accountNumber').value.trim(),
+    accountName: document.getElementById('accountName').value.trim(),
+  };
   renderResults();
 }
 
@@ -715,7 +760,17 @@ function renderResults(){
   document.getElementById('copyBtn').classList.remove('copied');
   document.getElementById('copyBtn').textContent = 'Salin buat Share ke Grup WA 📋';
 
- // isi kartu buat export gambar
+  const transferBox = document.getElementById('transferBox');
+  const hasTransfer = lastResult.bankName || lastResult.accountNumber || lastResult.accountName;
+  if(hasTransfer){
+    transferBox.style.display = 'block';
+    document.getElementById('transferText').innerHTML =
+      `${escapeHtml(lastResult.bankName || '-')} — ${escapeHtml(lastResult.accountNumber || '-')}<br/>a.n. ${escapeHtml(lastResult.accountName || '-')}`;
+  } else {
+    transferBox.style.display = 'none';
+  }
+
+  // isi kartu buat export gambar
   document.getElementById('exportEventName').textContent = lastResult.eventName || 'Struk Patungan';
   document.getElementById('exportPersonList').innerHTML = lastResult.results.map(p => `
     <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #DAD6E8; font-size:14px;">
@@ -724,6 +779,13 @@ function renderResults(){
     </div>
   `).join('');
   document.getElementById('exportGrandTotal').textContent = formatRp(lastResult.grandTotal);
+  const exportTransfer = document.getElementById('exportTransfer');
+  if(hasTransfer){
+    exportTransfer.style.display = 'block';
+    exportTransfer.innerHTML = `TRANSFER KE: ${escapeHtml(lastResult.bankName || '-')} — ${escapeHtml(lastResult.accountNumber || '-')} a.n. ${escapeHtml(lastResult.accountName || '-')}`;
+  } else {
+    exportTransfer.style.display = 'none';
+  }
 
   section.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
@@ -734,21 +796,31 @@ async function exportImage(){
   btn.textContent = 'Lagi bikin gambarnya...';
   btn.disabled = true;
   try{
+    if(typeof html2canvas === 'undefined'){
+      throw new Error('Library html2canvas belum ke-load. Cek lagi <script> tag-nya di <head>.');
+    }
     const card = document.getElementById('exportCard');
     card.style.left = '0px';
     card.style.position = 'fixed';
     card.style.top = '-99999px';
-    const canvas = await html2canvas(card, { backgroundColor: '#FFFFFF', scale: 2 });
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#FFFFFF',
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      logging: false,
+    });
     card.style.position = 'absolute';
     card.style.left = '-9999px';
     card.style.top = '0';
     const link = document.createElement('a');
     const namePart = (lastResult.eventName || 'struk').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    link.download = `patungan-${namePart}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = `patungan-${namePart}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.92);
     link.click();
   } catch(err){
-    alert('Gagal bikin gambar, coba lagi ya.');
+    console.error('Export gagal:', err);
+    alert('Gagal bikin gambar: ' + (err && err.message ? err.message : 'unknown error') + '\n\nCek juga tab Console di DevTools buat detail errornya.');
   } finally {
     btn.textContent = original;
     btn.disabled = false;
@@ -767,6 +839,9 @@ function copyResult(){
     text += `${p.name}: ${formatRp(p.total)}\n`;
   });
   text += `\nTotal: ${formatRp(lastResult.grandTotal)}`;
+  if(lastResult.bankName || lastResult.accountNumber || lastResult.accountName){
+    text += `\n\n💸 Transfer ke:\n${lastResult.bankName || '-'} — ${lastResult.accountNumber || '-'}\na.n. ${lastResult.accountName || '-'}`;
+  }
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = 'Kesalin! Gas paste di grup ✅';
