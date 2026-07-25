@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>PATUNGAN! — Struk Digital Split Bill</title>
+<title>PATUNGAN! — Struk Digital</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -309,7 +309,7 @@
 
     <div class="section">
       <p class="eyebrow">Acara Apa Nih</p>
-      <input type="text" id="eventName" class="event-input" placeholder="Ulang Tahun Udin 🎂" />
+      <input type="text" id="eventName" class="event-input" placeholder="Ulang Tahun Sarah 🎂" />
     </div>
 
     <hr class="divider" />
@@ -319,7 +319,7 @@
       <h2 class="label">Siapa Aja Nih? 🙌</h2>
       <div class="add-row">
         <textarea id="nameInput" rows="2" placeholder="Ketik/paste nama, pisahin pakai koma atau baris baru&#10;Contoh: Budi, Sari, Andi"></textarea>
-        <button class="btn" onclick="addPerson()">Add+</button>
+        <button class="btn" onclick="addPerson()">Tambah Semua +</button>
       </div>
       <div id="chipsBox" class="chips"></div>
     </div>
@@ -449,10 +449,7 @@
     </div>
   </div>
 
-  <div class="footer-note">tap nama di hasil buat liat rinciannya, gengs ✨</div>
-  <div style="text-align:center; font-family:'Space Mono', monospace; font-size:11px; color:#5B5470; margin-top:24px; opacity:0.7;">
-  © 2026 adiapandi. All rights reserved.
-</div>
+  <div class="footer-note">tap nama di hasil buat liat rinciannya, bestie ✨</div>
 </div>
 
 <script>
@@ -645,7 +642,7 @@ async function scanReceipt(){
     const mediaType = selectedFile.type || 'image/jpeg';
 
     // Ganti dengan URL Cloudflare Worker kamu (yang udah nyimpen GEMINI_API_KEY sebagai secret)
-    const PROXY_URL = "https://patungan-proxy2.hasanahdigital.workers.dev";
+    const PROXY_URL = "https://patungan-proxy.hasanahdigital.workers.dev";
 
     const promptText = "Ini foto struk belanja/makan. Baca semua nama item beserta harganya (harga total per baris item, bukan per unit kalau ada qty>1). Balas HANYA dengan JSON array valid, tanpa teks lain, tanpa markdown/backtick, format persis: [{\"name\":\"nama item\",\"price\":12000}]. Harga berupa angka rupiah murni tanpa titik/koma/simbol. JANGAN masukkan baris pajak, service charge, diskon, atau total ke dalam array ini, cukup item barang/makanannya saja.";
 
@@ -816,15 +813,47 @@ async function exportImage(){
     card.style.position = 'absolute';
     card.style.left = '-9999px';
     card.style.top = '0';
-    const link = document.createElement('a');
+
     const namePart = (lastResult.eventName || 'struk').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    link.download = `patungan-${namePart}.jpg`;
-    link.href = canvas.toDataURL('image/jpeg', 0.92);
-    link.click();
+    const fileName = `patungan-${namePart}.jpg`;
+
+    canvas.toBlob(async (blob) => {
+      if(!blob){
+        alert('Gagal bikin gambar, coba lagi ya.');
+        btn.textContent = original;
+        btn.disabled = false;
+        return;
+      }
+      const file = new File([blob], fileName, { type: 'image/jpeg' });
+
+      // Cara 1: Web Share API — kerja paling mulus di iOS (muncul opsi "Save Image" di share sheet)
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        try{
+          await navigator.share({ files: [file], title: 'Struk Patungan' });
+        }catch(shareErr){
+          // user batal share, gak apa-apa, gak perlu fallback lagi
+        }
+      } else {
+        const url = URL.createObjectURL(blob);
+        const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+        if(isIOS){
+          // Cara 2 (fallback iOS lama): buka di tab baru, user tinggal tap & tahan buat simpan
+          window.open(url, '_blank');
+          alert('Gambarnya kebuka di tab baru — tap & tahan gambarnya, terus pilih "Simpan ke Foto".');
+        } else {
+          // Cara 3: download langsung, jalan normal di Android/desktop
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = url;
+          link.click();
+        }
+      }
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 'image/jpeg', 0.92);
   } catch(err){
     console.error('Export gagal:', err);
     alert('Gagal bikin gambar: ' + (err && err.message ? err.message : 'unknown error') + '\n\nCek juga tab Console di DevTools buat detail errornya.');
-  } finally {
     btn.textContent = original;
     btn.disabled = false;
   }
