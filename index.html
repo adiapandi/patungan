@@ -645,7 +645,7 @@ async function scanReceipt(){
     const mediaType = selectedFile.type || 'image/jpeg';
 
     // Ganti dengan URL Cloudflare Worker kamu (yang udah nyimpen GEMINI_API_KEY sebagai secret)
-    const PROXY_URL = "https://patungan-proxy.hasanahdigital.workers.dev";
+    const PROXY_URL = "https://patungan-proxy2.hasanahdigital.workers.dev";
 
     const promptText = "Ini foto struk belanja/makan. Baca semua nama item beserta harganya (harga total per baris item, bukan per unit kalau ada qty>1). Balas HANYA dengan JSON array valid, tanpa teks lain, tanpa markdown/backtick, format persis: [{\"name\":\"nama item\",\"price\":12000}]. Harga berupa angka rupiah murni tanpa titik/koma/simbol. JANGAN masukkan baris pajak, service charge, diskon, atau total ke dalam array ini, cukup item barang/makanannya saja.";
 
